@@ -39,7 +39,7 @@ moisture_value_percent = 0.00                                       #in percent
 waterlevel = False                                                  #variables that defines if there is still water in the tank or  not
 moisture_value_list = []                                            #in this list the latest 30 values of the moisture sensor will be stored --> reference for average
 light_value_list = []                                               #in this list the latest 30 values of the moisture sensor will be stored --> reference for average
-adressee = 'testlogin.felix@gmail.com'                              #this adresse will recieve an email when the waterlevel in the tank is low
+adressee = ''                              			    #!this adresse will recieve an email when the waterlevel in the tank is low
 led_toggle = 0
 online_since = datetime.now()
 
@@ -65,7 +65,7 @@ pixels = neopixel.NeoPixel(led_gpio, led_num, brightness=led_brightness, auto_wr
                            pixel_order=led_order)                   #defines the WS2813 LED strip
 
 # Initialize Blynk
-blynk = BlynkLib.Blynk('SDqOH9cUOAYnwuqnCISQIko32dUkOlZ-') #use you own token (according to email)
+blynk = BlynkLib.Blynk('')						 #!use you own token (according to email)
 
 #register virtual Blynk pins
 @blynk.VIRTUAL_WRITE(2)                                             #Reads the button value from the BlynkApp, setting in BlynkApp --> "Output" V2
