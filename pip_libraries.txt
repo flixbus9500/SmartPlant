@@ -1,5 +1,0 @@
-DateTime
-spidev
-board
-adafruit-circuitpython-neopixel
-blynk-library-python
