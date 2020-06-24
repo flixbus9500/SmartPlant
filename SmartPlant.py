@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 import RPi.GPIO as GPIO
 from datetime import datetime, date, timedelta
-import spidev
 import board
 import neopixel
+import Adafruit_ADS1x15
 import BlynkLib
 import time
 import threading
@@ -39,7 +39,7 @@ moisture_value_percent = 0.00                                       #in percent
 waterlevel = False                                                  #variables that defines if there is still water in the tank or  not
 moisture_value_list = []                                            #in this list the latest 30 values of the moisture sensor will be stored --> reference for average
 light_value_list = []                                               #in this list the latest 30 values of the moisture sensor will be stored --> reference for average
-adressee = ''                              			    #!this adresse will recieve an email when the waterlevel in the tank is low
+adressee = ''                                                       #!this adresse will recieve an email when the waterlevel in the tank is low
 led_toggle = 0
 online_since = datetime.now()
 
@@ -65,7 +65,7 @@ pixels = neopixel.NeoPixel(led_gpio, led_num, brightness=led_brightness, auto_wr
                            pixel_order=led_order)                   #defines the WS2813 LED strip
 
 # Initialize Blynk
-blynk = BlynkLib.Blynk('')						 #!use you own token (according to email)
+blynk = BlynkLib.Blynk('')                                          #!use you own token (according to email)
 
 #register virtual Blynk pins
 @blynk.VIRTUAL_WRITE(2)                                             #Reads the button value from the BlynkApp, setting in BlynkApp --> "Output" V2
@@ -114,18 +114,23 @@ GPIO.setup(level_sensor_pin,GPIO.IN,pull_up_down=GPIO.PUD_UP)       #Defines tha
 
 # initialization of the analog pins
 A0 = 0                                                              #defines the input pin of the Moisture sensor
-A2 = 2                                                              #defines the input pin of the Light sensor 
+A1 = 1                                                              #defines the input pin of the Light sensor 
 
 # SPI-settings
-spi = spidev.SpiDev()                                               #settings for the SPI protocol
-spi.open(0,0)                                                       #settings for the SPI protocol
-spi.max_speed_hz = 2000000                                          #settings for the SPI protocol
+#spi = spidev.SpiDev()                                               #settings for the SPI protocol
+#spi.open(0,0)                                                       #settings for the SPI protocol
+#spi.max_speed_hz = 2000000                                          #settings for the SPI protocol
 
-def readadc(adcnum):                                                #function that reads an analog signal (argument "adcnum" will later be the pin you used)
+# Or create an ADS1015 ADC (12-bit) instance.
+adc = Adafruit_ADS1x15.ADS1015()
+
+#def readadc(adcnum):                                                #function that reads an analog signal (argument "adcnum" will later be the pin you used)
 # read SPI-values
- r = spi.xfer2([1,8+adcnum <<4,0])
- adcout = ((r[1] &3) <<8)+r[2]
- return adcout
+ #r = spi.xfer2([1,8+adcnum <<4,0])
+ #adcout = ((r[1] &3) <<8)+r[2]
+ #return adcout
+
+#new funtion from library adc.read_adc(i)
 
 #google logging
 MY_SPREADSHEET_ID = ''                                              #!spreadsheet ID of the google sheet
@@ -181,7 +186,7 @@ def update_sheet(sheetname, moisture, speed, ledlight, daylight):  #function tha
     exit()
     
 def sheet_updater():                                                #function creates a new thread for the update__sheet() function
-    sheet_update_thread = Thread(target = update_sheet, args=("Vertical_Farm", moisture_value, pump_pwm, led, light_value))
+    sheet_update_thread = Thread(target = update_sheet, args=("SmartPlant", moisture_value, pump_pwm, led, light_value)) #"SmartPlant" is the name of the register in your Google sheet
     sheet_update_thread.start()
     #print("request pending")
 
@@ -274,7 +279,7 @@ def read_moisture_sensor():                                         #reads the m
     global moisture_value
     if len(moisture_value_list) > 60:
         moisture_value_list.pop(0)
-    moisture_value_list.append(round(readadc(A0), 2))
+    moisture_value_list.append(round(adc.read_adc(A0), 2))
     moisture_value = round(get_average(moisture_value_list),0)
     
 def read_light_sensor():                                            #reads the light value, adding the value to a list and takes average of that list
@@ -282,7 +287,7 @@ def read_light_sensor():                                            #reads the l
     global light_value
     if len(light_value_list) > 60:
         light_value_list.pop(0)
-    light_value_list.append(round(readadc(A2),2))
+    light_value_list.append(round(adc.read_adc(A1),2))
     light_value = round(get_average(light_value_list),0) 
     
 def waterlevel_toggle():                                            #detects if the waterlevel in the tank is low, sends an alert email
