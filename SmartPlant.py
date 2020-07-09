@@ -236,7 +236,7 @@ def lighting(x):                                                    #toggles the
         led = 0
 
 def automatic_lighting():                                           #turns the LED's on at a certain enviroment light level
-    if light_value < 400:
+    if light_value > 400:
         lighting(True)
     elif led_toggle == 1:
         lighting(True)
