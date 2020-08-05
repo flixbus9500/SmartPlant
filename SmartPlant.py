@@ -85,7 +85,7 @@ def my_write_handler(value):
         pumpstop()
     
     
-@blynk.VIRTUAL_WRITE(5)                                             #Reads the button value from the BlynkApp, setting in BlynkApp --> "Output" V5
+@blynk.VIRTUAL_WRITE(4)                                             #Reads the button value from the BlynkApp, setting in BlynkApp --> "Output" V5
 def my_write_handler(value):
     global led_toggle
     led_toggle_button = int(value[0])
@@ -95,7 +95,7 @@ def my_write_handler(value):
         elif led_toggle == 1:
             led_toggle = 0
 
-@blynk.VIRTUAL_WRITE(6)                                             #Reads the button value from the BlynkApp, setting in BlynkApp --> "Output" V6
+@blynk.VIRTUAL_WRITE(5)                                             #Reads the button value from the BlynkApp, setting in BlynkApp --> "Output" V6
 def my_write_handler(value):
     global last_time_watered
     global min_watering_difference
@@ -249,9 +249,9 @@ def automatic_watering():                                           #waters the 
         
 def send_values_to_blynk():                                         #sends moisture value in percent to the BlynkApp
     blynk.virtual_write(3, str(moisture_value_percent)) 
-    blynk.virtual_write(7, str(last_time_watered))
-    blynk.virtual_write(8, str(online_since))
-    blynk.virtual_write(9, str(waterlevel_cm))
+    blynk.virtual_write(6, str(last_time_watered))
+    blynk.virtual_write(7, str(online_since))
+    blynk.virtual_write(8, str(waterlevel_cm))
 
 def read_moisture_sensor():                                         #reads the moisture value, adding the value to a list and takes average of that list
     #print("read moisture")
