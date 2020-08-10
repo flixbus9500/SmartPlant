@@ -14,7 +14,6 @@ beautifulsoup4==4.7.1
 blinker==1.4
 blinkt==0.1.2
 blynk-library-python==0.2.0
-board==1.0
 buttonshim==0.0.2
 cachetools==4.1.0
 Cap1xxx==0.1.3
